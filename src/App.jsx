@@ -278,7 +278,7 @@ const partition = async (arr, start, end) => {
 
   return (
     <>
-      <h1 className="text-center text-white font-bold text-2xl uppercase font-sans mt-3">Observing array</h1>
+      <h1 className="text-center text-white font-bold text-2xl uppercase font-sans mt-3">SortItOut</h1>
 
       <div className="p-3 mt-6 m-5 h-[80vh]">
         <div className="bg-black w-full h-full">
