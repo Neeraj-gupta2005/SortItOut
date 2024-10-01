@@ -24,6 +24,17 @@ function App() {
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+  
+  // Function to shuffle the array
+  const shuffleArray = (arr) => {
+    let shuffledArray = [...arr]; // Create a copy of the array
+    for (let i = shuffledArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
+      // Swap elements
+      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+    }
+    setArray(shuffledArray); // Update state to trigger re-render
+  };
 
   // Function to highlight the sorted array
   const sortingComplete = async () => {
@@ -73,6 +84,7 @@ function App() {
 
   }
 
+  // Selection Sort implementation with delay
   const selectionSort = async (arr) => {
     const n = arr.length;
     let sortedArray = [...arr];
@@ -111,16 +123,71 @@ function App() {
     setIsSorting(false); // Mark sorting as done
 }
 
-  // Function to shuffle the array
-  const shuffleArray = (arr) => {
-    let shuffledArray = [...arr]; // Create a copy of the array
-    for (let i = shuffledArray.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1)); // Random index from 0 to i
-      // Swap elements
-      [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+const mergeSort = async (arr, start = 0, end = arr.length - 1) => {
+  if (start >= end) return;
+
+  const middle = Math.floor((start + end) / 2);
+
+  // Split left half
+  await mergeSort(arr, start, middle);
+  // Split right half
+  await mergeSort(arr, middle + 1, end);
+  // Merge the two halves
+  await merge(arr, start, middle, end);
+
+  if(start === 0 && end === arr.length - 1) {
+    sortingComplete();
+    setIsSorting(false);
+  }
+
+};
+
+const merge = async (arr, start, middle, end) => {
+  let left = arr.slice(start, middle + 1);
+  let right = arr.slice(middle + 1, end + 1);
+
+  let i = 0, j = 0, k = start;
+
+  while (i < left.length && j < right.length) {
+    setCurrentIndices([k]); // Highlight the index being merged
+    await sleep(15);
+
+    if (left[i] <= right[j]) {
+      arr[k] = left[i];
+      i++;
+    } else {
+      arr[k] = right[j];
+      j++;
     }
-    setArray(shuffledArray); // Update state to trigger re-render
-  };
+    
+    setArray([...arr]); // Update array state
+    k++;
+  }
+
+  // Copy any remaining elements from the left half
+  while (i < left.length) {
+    setCurrentIndices([k]);
+    await sleep(15);
+    arr[k] = left[i];
+    i++;
+    setArray([...arr]);
+    k++;
+  }
+
+  // Copy any remaining elements from the right half
+  while (j < right.length) {
+    setCurrentIndices([k]);
+    await sleep(15);
+    arr[k] = right[j];
+    j++;
+    setArray([...arr]);
+    k++;
+  }
+
+  setCurrentIndices([-1]); // Reset highlighting after merging
+  
+};
+
 
   return (
     <>
@@ -158,6 +225,7 @@ function App() {
             >
               <option value="BubbleSort">Bubble Sort</option>
               <option value="SelectionSort">Selection Sort</option>
+              <option value="MergeSort">Merge Sort</option>
             </select>
             <button
               className="hover:bg-slate-300 transition-all duration-75  rounded-lg bg-white px-4 py-2"
@@ -167,6 +235,9 @@ function App() {
                 }
                 else if (selectedSort === "SelectionSort") {
                   selectionSort(array);
+                }
+                else if (selectedSort === "MergeSort") {
+                  mergeSort(array);
                 }
               }}
               disabled={isSorting} // Disable while sorting
