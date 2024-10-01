@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 function App() {
   const numbers = [
@@ -14,6 +14,7 @@ function App() {
     91, 92, 93, 94, 95, 96, 97, 98, 99, 100
   ];
 
+  const listRefs = useRef([]);
   const [array, setArray] = useState(numbers);
   const [isSorting, setIsSorting] = useState(false); 
   const [currentIndices, setCurrentIndices] = useState([-1,-1]);
@@ -23,10 +24,22 @@ function App() {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  const sortingComplete = () => {
-    array.forEach(element => {
-      
-    });
+  const sortingComplete = async () => {
+    for (let i = 0; i < numbers.length; i++) {
+      // Change the background color of the current item
+      if (listRefs.current[i]) {
+        listRefs.current[i].style.backgroundColor = "white";
+      }
+      await sleep(10); // Wait for 100ms before changing the next
+    }
+    setTimeout(() => {
+      for (let i = 0; i < numbers.length; i++) {
+        // Change the background color of the current item
+        if (listRefs.current[i]) {
+          listRefs.current[i].style.backgroundColor = "#07fc03";
+        }
+      }
+    }, 1000);
   }
   
   // Bubble Sort implementation with delay
@@ -52,9 +65,10 @@ function App() {
       }
     }
     setCurrentIndices([-1,-1]);
+    sortingComplete();
     setIsSorting(false); // End sorting
 
-    sortingComplete();
+
   }
 
   // Function to shuffle the array
@@ -78,6 +92,7 @@ function App() {
             {array.map((item, i) => (
               <li
                 key={i}
+                ref={(el) => (listRefs.current[i] = el)}
                 className={`bg-[#07fc03] ${currentIndices.includes(i) ? 'bg-white' : ''}`}
                 style={{
                   height: `${item}%`,
