@@ -303,7 +303,7 @@ const partition = async (arr, start, end) => {
             onClick={() => shuffleArray(array)}
             disabled={isSorting} // Disable while sorting
           >
-            Randomise
+            Randomize
           </button>
           <div className="flex items-start gap-3">
             <select value={selectedSort}
