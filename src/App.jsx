@@ -123,6 +123,45 @@ function App() {
     setIsSorting(false); // Mark sorting as done
 }
 
+const insertionSort = async (arr) => {
+  let sortedArray = [...arr];
+  const n = sortedArray.length;
+  setIsSorting(true); // Start sorting
+  
+  for (let i = 1; i < n; i++) {
+    let key = sortedArray[i]; // Element to be inserted
+    let j = i - 1;
+
+    // Highlight the current element being compared
+    setCurrentIndices([i, j]);
+    await sleep(15);
+
+    // Shift elements of the sorted part of the array to the right
+    while (j >= 0 && sortedArray[j] > key) {
+      sortedArray[j + 1] = sortedArray[j]; // Shift element right
+      setArray([...sortedArray]); // Update the array state
+
+      // Highlight comparison between elements
+      setCurrentIndices([j + 1, j]);
+      await sleep(15);
+      
+      j--;
+    }
+
+    // Insert the key at the correct position
+    sortedArray[j + 1] = key;
+    setArray([...sortedArray]); // Update the array state
+    await sleep(15);
+
+    // Reset highlighting
+    setCurrentIndices([-1, -1]);
+  }
+
+  sortingComplete(); // Trigger post-sort animation
+  setIsSorting(false); // End sorting
+};
+
+
 const mergeSort = async (arr, start = 0, end = arr.length - 1) => {
   if (start >= end) return;
 
@@ -189,6 +228,54 @@ const merge = async (arr, start, middle, end) => {
 };
 
 
+
+
+const quickSort = async (arr, start = 0, end = arr.length - 1) => {
+  if (start < end) {
+    // Partition the array and get the pivot index
+    const pivotIndex = await partition(arr, start, end);
+    
+    // Recursively sort the left partition
+    await quickSort(arr, start, pivotIndex - 1);
+    
+    // Recursively sort the right partition
+    await quickSort(arr, pivotIndex + 1, end);
+  }
+
+  // If sorting is complete, call sortingComplete
+  if (start === 0 && end === arr.length - 1) {
+    sortingComplete();
+    setIsSorting(false); // Mark sorting as complete
+  }
+};
+
+const partition = async (arr, start, end) => {
+  let pivot = arr[end];  // Take the last element as the pivot
+  let pivotIndex = start; // Set the pivot index to start initially
+
+  for (let i = start; i < end; i++) {
+    setCurrentIndices([i, pivotIndex]); // Highlight the current element and pivot
+    await sleep(20); // Slow down for visualization
+
+    if (arr[i] < pivot) {
+      // Swap elements
+      [arr[i], arr[pivotIndex]] = [arr[pivotIndex], arr[i]];
+      setArray([...arr]); // Update array state
+      pivotIndex++; // Move the pivot index
+    }
+  }
+
+  // Swap the pivot element with the element at pivotIndex
+  [arr[pivotIndex], arr[end]] = [arr[end], arr[pivotIndex]];
+  setArray([...arr]); // Update array state
+  await sleep(15); // Slow down for visualization
+
+  setCurrentIndices([-1, -1]); // Reset highlight
+  return pivotIndex; // Return the final pivot position
+};
+
+
+
   return (
     <>
       <h1 className="text-center text-white font-bold text-2xl uppercase font-sans mt-3">Observing array</h1>
@@ -225,7 +312,9 @@ const merge = async (arr, start, middle, end) => {
             >
               <option value="BubbleSort">Bubble Sort</option>
               <option value="SelectionSort">Selection Sort</option>
+              <option value="InsertionSort">Insertion Sort</option>
               <option value="MergeSort">Merge Sort</option>
+              <option value="QuickSort">Quick Sort</option>
             </select>
             <button
               className="hover:bg-slate-300 transition-all duration-75  rounded-lg bg-white px-4 py-2"
@@ -238,6 +327,12 @@ const merge = async (arr, start, middle, end) => {
                 }
                 else if (selectedSort === "MergeSort") {
                   mergeSort(array);
+                }
+                else if (selectedSort === "QuickSort") {
+                  quickSort(array);
+                }
+                else if (selectedSort === "InsertionSort") {
+                  insertionSort(array);
                 }
               }}
               disabled={isSorting} // Disable while sorting
