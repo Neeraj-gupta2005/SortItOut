@@ -18,12 +18,14 @@ function App() {
   const [array, setArray] = useState(numbers);
   const [isSorting, setIsSorting] = useState(false); 
   const [currentIndices, setCurrentIndices] = useState([-1,-1]);
+  const [selectedSort, setSelectedSort] = useState("BubbleSort");
 
   // Sleep function to introduce delay
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Function to highlight the sorted array
   const sortingComplete = async () => {
     for (let i = 0; i < numbers.length; i++) {
       // Change the background color of the current item
@@ -71,6 +73,44 @@ function App() {
 
   }
 
+  const selectionSort = async (arr) => {
+    const n = arr.length;
+    let sortedArray = [...arr];
+    setIsSorting(true); // Start sorting
+
+    for(let i = 0 ; i < n - 1 ; i++){
+      let minIndex = i;
+
+      for(let j = i + 1; j < n; j++) {
+        setCurrentIndices([i, j]); // Highlight both current element and compared element
+        
+        if(sortedArray[j] < sortedArray[minIndex]){
+          minIndex = j; // Highlight the new minimum element
+        }
+        
+        await sleep(1); // Adjust this for faster/slower animation
+      }
+
+      // Highlight the swap operation (color change for both elements)
+      setCurrentIndices([i, minIndex]); // Highlight the elements to be swapped
+      await sleep(1); // Delay for visualization
+      
+      // Swap elements
+      const temp = sortedArray[i];
+      sortedArray[i] = sortedArray[minIndex];
+      sortedArray[minIndex] = temp;
+
+      // Update array state
+      setArray([...sortedArray]);
+
+      // Clear highlight after swap
+      setCurrentIndices([-1, -1]);
+    }
+    setCurrentIndices([-1, -1]); // Reset the highlighting
+    sortingComplete(); // Notify sorting completion
+    setIsSorting(false); // Mark sorting as done
+}
+
   // Function to shuffle the array
   const shuffleArray = (arr) => {
     let shuffledArray = [...arr]; // Create a copy of the array
@@ -103,21 +143,37 @@ function App() {
           </ul>
         </div>
 
-        <div className="flex justify-between">
+        <div className="flex justify-between mt-3 items-start">
           <button
-            className="px-4 py-2 mt-3 rounded-lg bg-white hover:bg-slate-300 transition-all duration-75"
+            className="px-4 py-2 rounded-lg bg-white hover:bg-slate-300 transition-all duration-75"
             onClick={() => shuffleArray(array)}
             disabled={isSorting} // Disable while sorting
           >
             Randomise
           </button>
-          <button
-            className="hover:bg-slate-300 transition-all duration-75 px-4 py-2 mt-3 rounded-lg bg-white"
-            onClick={() => bubbleSort(array)}
-            disabled={isSorting} // Disable while sorting
-          >
-            Sort
-          </button>
+          <div className="flex items-start gap-3">
+            <select value={selectedSort}
+            onChange={(e) => setSelectedSort(e.target.value)}
+            className="mb-4 p-2 border border-gray-300 rounded"
+            >
+              <option value="BubbleSort">Bubble Sort</option>
+              <option value="SelectionSort">Selection Sort</option>
+            </select>
+            <button
+              className="hover:bg-slate-300 transition-all duration-75  rounded-lg bg-white px-4 py-2"
+              onClick={() => {
+                if (selectedSort === "BubbleSort") {
+                  bubbleSort(array);
+                }
+                else if (selectedSort === "SelectionSort") {
+                  selectionSort(array);
+                }
+              }}
+              disabled={isSorting} // Disable while sorting
+            >
+              Sort
+            </button>
+          </div>
         </div>
       </div>
     </>
