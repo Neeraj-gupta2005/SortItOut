@@ -297,7 +297,7 @@ const partition = async (arr, start, end) => {
           </ul>
         </div>
 
-        <div className="flex justify-between mt-3 items-start">
+        <div className="flex justify-between mt-3 items-start max-sm:flex-col max-sm:gap-3 max-sm:items-end">
           <button
             className="px-4 py-2 rounded-lg bg-white hover:bg-slate-300 transition-all duration-75"
             onClick={() => shuffleArray(array)}
