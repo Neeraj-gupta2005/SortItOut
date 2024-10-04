@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-    <video src="your_video_link.mp4" alt="Project Video" muted loop></video>
+    <video src="src.mp4" alt="Project Video" muted loop></video>
   <br />
 
   <div>
