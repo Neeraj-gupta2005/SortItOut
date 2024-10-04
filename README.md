@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-    <video src="src/iphone live video.mp4" alt="Project Video" muted loop></video>
+    <img src="iphone-gif.gif" alt="Project GIF">
   <br />
 
   <div>
