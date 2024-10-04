@@ -1,6 +1,6 @@
 <div align="center">
   <br />
-    <img src="banner_sortitout.png" alt="Project Banner">
+    <video src="your_video_link.mp4" alt="Project Video" muted loop></video>
   <br />
 
   <div>
